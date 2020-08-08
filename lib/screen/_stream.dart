@@ -20,11 +20,26 @@ class AuthService {
     }
   }
 
-  Future getUserAccountInfoByID(String uid) {
+  Future<AccountInfo> getUserAccountInfoByID(String uid) async {
+    DocumentSnapshot _documentSnapshot;
     if (uid != null) {
-      return useraccount.document(uid).get();
+      _documentSnapshot = await useraccount.document(uid).get();
+      return _convert2UserAccountDetail(_documentSnapshot, uid);
     } else {
-      return useraccount.document('uid').get(); // TECH check with karthi
+      return _convert2UserAccountDetail(
+          _documentSnapshot, uid); // TECH check with karthi
+    }
+  }
+
+  AccountInfo _convert2UserAccountDetail(
+      DocumentSnapshot _documentSnapshot, String uid) {
+    if (_documentSnapshot != null) {
+      return AccountInfo(
+          uid: uid,
+          username: _documentSnapshot.data['username'] ?? null,
+          isuserverified: _documentSnapshot.data['isUserVerified'] ?? false);
+    } else {
+      return AccountInfo();
     }
   }
 
