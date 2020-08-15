@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:widget_samples/screen/_stream.dart';
 
+import 'drawer/maindrawer.dart';
+
 class Dashboard extends StatefulWidget {
   final AsyncSnapshot<AccountInfo> accountInfo;
   Dashboard({@required this.accountInfo});
@@ -11,7 +13,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final AuthService _authService = AuthService();
   static final List<String> chartDropdownItems = [
     'Last 7 days',
     'Last month',
@@ -31,76 +32,8 @@ class _DashboardState extends State<Dashboard> {
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
                   fontSize: 20.0)),
-          actions: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  FlatButton(
-                    padding: EdgeInsets.all(0),
-                    color: Colors.greenAccent,
-                    onPressed: () async {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        child: AlertDialog(
-                          title: Text('Do you want to Sign Out ?'),
-                          elevation: 24.0,
-                          actions: [
-                            RaisedButton(
-                              padding: const EdgeInsets.all(8.0),
-                              textColor: Colors.white,
-                              color: Colors.green,
-                              onPressed: () async {
-                                dynamic result = await _authService.signOut();
-                                if (result == null) {
-                                  print('sign out');
-                                }
-                                Navigator.pop(context);
-                              },
-                              child: Text("Sign Out"),
-                            ),
-                            Spacer(),
-                            RaisedButton(
-                              padding: const EdgeInsets.all(8.0),
-                              textColor: Colors.white,
-                              color: Colors.blue,
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text("Cancel"),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Text(
-                          "Sign Out",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14.0),
-                        ),
-                        SizedBox(
-                          width: .5,
-                        ),
-                        Icon(
-                          Icons.exit_to_app,
-                          color: Colors.black,
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
         ),
-        drawer: Drawer(),
+        drawer: MainDrawer(),
         body: StaggeredGridView.count(
           crossAxisCount: 2,
           crossAxisSpacing: 12.0,
