@@ -1,24 +1,336 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:widget_samples/screen/_stream.dart';
 
 class Dashboard extends StatefulWidget {
-  Dashboard({Key key}) : super(key: key);
+  final AsyncSnapshot<AccountInfo> accountInfo;
+  Dashboard({@required this.accountInfo});
   @override
   _DashboardState createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+  final AuthService _authService = AuthService();
+  static final List<String> chartDropdownItems = [
+    'Last 7 days',
+    'Last month',
+    'Last year'
+  ];
+  String actualDropdown = chartDropdownItems[0];
+  int actualChart = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            cardinDashboard(context),
-            Text('data'),
+        appBar: AppBar(
+          elevation: 2.0,
+          backgroundColor: Colors.greenAccent,
+          title: Text('Business Ops',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20.0)),
+          actions: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  FlatButton(
+                    padding: EdgeInsets.all(0),
+                    color: Colors.greenAccent,
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        child: AlertDialog(
+                          title: Text('Do you want to Sign Out ?'),
+                          elevation: 24.0,
+                          actions: [
+                            RaisedButton(
+                              padding: const EdgeInsets.all(8.0),
+                              textColor: Colors.white,
+                              color: Colors.green,
+                              onPressed: () async {
+                                dynamic result = await _authService.signOut();
+                                if (result == null) {
+                                  print('sign out');
+                                }
+                                Navigator.pop(context);
+                              },
+                              child: Text("Sign Out"),
+                            ),
+                            Spacer(),
+                            RaisedButton(
+                              padding: const EdgeInsets.all(8.0),
+                              textColor: Colors.white,
+                              color: Colors.blue,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("Cancel"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          "Sign Out",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14.0),
+                        ),
+                        SizedBox(
+                          width: .5,
+                        ),
+                        Icon(
+                          Icons.exit_to_app,
+                          color: Colors.black,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
-      ),
-    );
+        drawer: Drawer(),
+        body: StaggeredGridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12.0,
+          mainAxisSpacing: 12.0,
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          children: <Widget>[
+            cardinDashboard(context),
+            _buildTile(
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Total Views',
+                              style: TextStyle(color: Colors.blueAccent)),
+                          Text('265K',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 34.0))
+                        ],
+                      ),
+                      Material(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(24.0),
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Icon(Icons.timeline,
+                                color: Colors.white, size: 30.0),
+                          )))
+                    ]),
+              ),
+            ),
+            _buildTile(
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Material(
+                          color: Colors.teal,
+                          shape: CircleBorder(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Icon(Icons.settings_applications,
+                                color: Colors.white, size: 30.0),
+                          )),
+                      Padding(padding: EdgeInsets.only(bottom: 16.0)),
+                      Text('General',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 24.0)),
+                      Text('Images, Videos',
+                          style: TextStyle(color: Colors.black45)),
+                    ]),
+              ),
+            ),
+            _buildTile(
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Material(
+                          color: Colors.amber,
+                          shape: CircleBorder(),
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Icon(Icons.notifications,
+                                color: Colors.white, size: 30.0),
+                          )),
+                      Padding(padding: EdgeInsets.only(bottom: 16.0)),
+                      Text('Alerts',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 24.0)),
+                      Text('All ', style: TextStyle(color: Colors.black45)),
+                    ]),
+              ),
+            ),
+            _buildTile(
+              Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text('Revenue',
+                                  style: TextStyle(color: Colors.green)),
+                              Text('\$16K',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 34.0)),
+                            ],
+                          ),
+                          DropdownButton(
+                              isDense: true,
+                              value: actualDropdown,
+                              onChanged: (String value) => setState(() {
+                                    actualDropdown = value;
+                                    actualChart = chartDropdownItems
+                                        .indexOf(value); // Refresh the chart
+                                  }),
+                              items: chartDropdownItems.map((String title) {
+                                return DropdownMenuItem(
+                                  value: title,
+                                  child: Text(title,
+                                      style: TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14.0)),
+                                );
+                              }).toList())
+                        ],
+                      ),
+                      Padding(padding: EdgeInsets.only(bottom: 4.0)),
+                    ],
+                  )),
+            ),
+            _buildTile(
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Shop Items',
+                              style: TextStyle(color: Colors.redAccent)),
+                          Text('173',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 34.0))
+                        ],
+                      ),
+                      Material(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(24.0),
+                          child: Center(
+                              child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Icon(Icons.store,
+                                color: Colors.white, size: 30.0),
+                          )))
+                    ]),
+              ),
+              onTap: () => print('object'),
+            ),
+            _buildTile(
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Shop Items',
+                              style: TextStyle(color: Colors.redAccent)),
+                          Text('173',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 34.0))
+                        ],
+                      ),
+                      Material(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(24.0),
+                          child: Center(
+                              child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Icon(Icons.store,
+                                color: Colors.white, size: 30.0),
+                          )))
+                    ]),
+              ),
+              onTap: () => print('object'),
+            ),
+          ],
+          staggeredTiles: [
+            StaggeredTile.extent(2, 220.0),
+            StaggeredTile.extent(2, 110.0),
+            StaggeredTile.extent(1, 180.0),
+            StaggeredTile.extent(1, 180.0),
+            StaggeredTile.extent(2, 220.0),
+            StaggeredTile.extent(2, 110.0),
+            StaggeredTile.extent(2, 110.0),
+          ],
+        ));
+  }
+
+  Widget _buildTile(Widget child, {Function() onTap}) {
+    return Material(
+        elevation: 14.0,
+        borderRadius: BorderRadius.circular(12.0),
+        shadowColor: Color(0x802196F3),
+        child: InkWell(
+            // Do onTap() if it isn't null, otherwise do print()
+            onTap: onTap != null
+                ? () => onTap()
+                : () {
+                    print('Not set yet');
+                  },
+            child: child));
   }
 }
 
@@ -250,19 +562,4 @@ Widget creditCard(
       ],
     ),
   );
-}
-
-Widget _buildTile(Widget child, {Function() onTap}) {
-  return Material(
-      elevation: 14.0,
-      borderRadius: BorderRadius.circular(12.0),
-      shadowColor: Color(0x802196F3),
-      child: InkWell(
-          // Do onTap() if it isn't null, otherwise do print()
-          onTap: onTap != null
-              ? () => onTap()
-              : () {
-                  print('Not set yet');
-                },
-          child: child));
 }

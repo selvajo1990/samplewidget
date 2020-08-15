@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:widget_samples/screen/_stream.dart';
+import 'package:widget_samples/screen/dashboard.dart';
 // import 'package:loading_overlay/loading_overlay.dart';
 // import 'package:widget_samples/screen/_loader.dart';
 
@@ -39,25 +40,25 @@ class _LoginDeciderState extends State<LoginDecider> {
               ),
             );
           } else if (_accountInfo.data.isuserverified == true) {
-            return Scaffold(
-              body: Center(
-                child: Container(
-                  child: FlatButton.icon(
-                      onPressed: () async {
-                        dynamic result = await _authService.signOut();
-                        if (result == null) {
-                          print('sign out');
-                        }
-                      },
-                      icon: Icon(Icons.remove_circle_outline),
-                      label: Text('Sign out')),
-                ),
-              ),
-            );
+            return Dashboard(accountInfo: _accountInfo);
           } else {
             return Scaffold(
               body: Center(
-                child: Text('User is not verified'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('User is not verified'),
+                    FlatButton.icon(
+                        onPressed: () async {
+                          dynamic result = await _authService.signOut();
+                          if (result == null) {
+                            print('sign out');
+                          }
+                        },
+                        icon: Icon(Icons.remove_circle_outline),
+                        label: Text('Sign out')),
+                  ],
+                ),
               ),
             );
           }

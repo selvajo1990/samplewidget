@@ -37,7 +37,7 @@ class AuthService {
       return AccountInfo(
           uid: uid,
           username: _documentSnapshot.data['username'] ?? null,
-          isuserverified: _documentSnapshot.data['isUserVerified'] ?? false);
+          isuserverified: _documentSnapshot.data['isverified'] ?? false);
     } else {
       return AccountInfo();
     }
