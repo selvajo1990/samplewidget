@@ -25,8 +25,8 @@ class MainDrawer extends StatelessWidget {
                 context: context,
                 barrierDismissible: false,
                 child: AlertDialog(
-                  title: Text('Do you want to Sign Out ?'),
-                  elevation: 24.0,
+                  content: Text('Do you want to Log Out ?'),
+                  elevation: 4.0,
                   actions: [
                     RaisedButton(
                       padding: const EdgeInsets.all(8.0),
@@ -34,20 +34,19 @@ class MainDrawer extends StatelessWidget {
                       color: Colors.green,
                       onPressed: () async {
                         dynamic result = await _authService.signOut();
-                        if (result == null) {
-                          print('sign out');
+                        if (result != null) {
+                          print('sign out failed');
                         }
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
                       },
                       child: Text("Sign Out"),
                     ),
-                    Spacer(),
                     RaisedButton(
                       padding: const EdgeInsets.all(8.0),
                       textColor: Colors.white,
                       color: Colors.blue,
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
                       },
                       child: Text("Cancel"),
                     ),
