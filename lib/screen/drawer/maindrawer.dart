@@ -1,58 +1,38 @@
 import 'package:flutter/material.dart';
-
 import '../_stream.dart';
 
-class MainDrawer extends StatelessWidget {
-  const MainDrawer({Key key}) : super(key: key);
+AsyncSnapshot<AccountInfo> globalAccountInfo;
 
+class MainDrawer extends StatefulWidget {
+  final AsyncSnapshot<AccountInfo> accountInfo;
+  MainDrawer({@required this.accountInfo});
+  @override
+  _MainDrawerState createState() => _MainDrawerState();
+}
+
+class _MainDrawerState extends State<MainDrawer> {
   @override
   Widget build(BuildContext context) {
-    final AuthService _authService = AuthService();
+    globalAccountInfo = widget.accountInfo;
     return Drawer(
       child: ListView(
         children: [
           _drawerHeader(context),
-          _drawerbody(
-            icon: Icons.people,
-            name: 'Users',
-            onTap: () {},
+          Visibility(
+            visible: widget.accountInfo.data.isSuperUser,
+            child: _drawerbody(
+              icon: Icons.people,
+              name: 'Users',
+              onTap: () {
+                _userList();
+              },
+            ),
           ),
           _drawerbody(
             icon: Icons.exit_to_app,
             name: 'Log Out',
             onTap: () {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                child: AlertDialog(
-                  content: Text('Do you want to Log Out ?'),
-                  elevation: 4.0,
-                  actions: [
-                    RaisedButton(
-                      padding: const EdgeInsets.all(8.0),
-                      textColor: Colors.white,
-                      color: Colors.green,
-                      onPressed: () async {
-                        dynamic result = await _authService.signOut();
-                        if (result != null) {
-                          print('sign out failed');
-                        }
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("Sign Out"),
-                    ),
-                    RaisedButton(
-                      padding: const EdgeInsets.all(8.0),
-                      textColor: Colors.white,
-                      color: Colors.blue,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("Cancel"),
-                    ),
-                  ],
-                ),
-              );
+              _signOutConfirmation(context);
             },
           )
         ],
@@ -68,7 +48,7 @@ Widget _drawerHeader(context) {
       padding: EdgeInsets.all(0),
       child: Container(
         width: double.infinity,
-        color: Theme.of(context).primaryColor,
+        color: Colors.greenAccent,
         child: Center(
           child: Column(
             children: [
@@ -88,13 +68,15 @@ Widget _drawerHeader(context) {
                         fit: BoxFit.cover)),
               ),
               Text(
-                'SelvaKumar Thangavelu',
+                globalAccountInfo.data.username,
                 style: TextStyle(
                   fontSize: 20,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
-              textbadge('Super User'),
+              textbadge(globalAccountInfo.data.isSuperUser
+                  ? 'Admin Role'
+                  : 'Normal Role'),
             ],
           ),
         ),
@@ -123,10 +105,50 @@ Widget _drawerbody({IconData icon, String name, GestureTapCallback onTap}) {
   );
 }
 
+_signOutConfirmation(BuildContext context) {
+  final AuthService _authService = AuthService();
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    child: AlertDialog(
+      content: Text('Do you want to Log Out ?'),
+      elevation: 4.0,
+      actions: [
+        RaisedButton(
+          padding: const EdgeInsets.all(8.0),
+          textColor: Colors.white,
+          color: Colors.green,
+          onPressed: () async {
+            dynamic result = await _authService.signOut();
+            if (result != null) {
+              print('sign out failed');
+            }
+            Navigator.of(context).pop();
+          },
+          child: Text("Sign Out"),
+        ),
+        RaisedButton(
+          padding: const EdgeInsets.all(8.0),
+          textColor: Colors.white,
+          color: Colors.blue,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text("Cancel"),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _userList() {
+  return ListView();
+}
+
 Widget textbadge(String badgeName) {
   return Card(
       margin: EdgeInsets.all(2),
-      elevation: 4.0,
+      elevation: 5.0,
       color: Colors.yellowAccent[400],
       child: Row(
         textBaseline: TextBaseline.alphabetic,
@@ -135,7 +157,7 @@ Widget textbadge(String badgeName) {
           Text(
             badgeName,
             style: TextStyle(
-              fontSize: 15.0,
+              fontSize: 14.0,
               fontWeight: FontWeight.bold,
             ),
           ),

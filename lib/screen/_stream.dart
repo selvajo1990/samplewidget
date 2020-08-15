@@ -37,7 +37,8 @@ class AuthService {
       return AccountInfo(
           uid: uid,
           username: _documentSnapshot.data['username'] ?? null,
-          isuserverified: _documentSnapshot.data['isverified'] ?? false);
+          isuserverified: _documentSnapshot.data['isverified'] ?? false,
+          isSuperUser: _documentSnapshot.data['isSuperUser'] ?? false);
     } else {
       return AccountInfo();
     }
@@ -69,10 +70,12 @@ class AuthService {
       DocumentSnapshot _document =
           await useraccount.document('2LpHJh0eUUXN400I8bWK4MtYXsN2').get();
       return _convert2UserModel(
-          firebaseUser,
-          AccountInfo(
-              username: _document.data['username'] ?? null,
-              isuserverified: _document.data['isverified'] ?? false));
+        firebaseUser,
+        AccountInfo(
+            username: _document.data['username'] ?? null,
+            isuserverified: _document.data['isverified'] ?? false,
+            isSuperUser: _document.data['isSuperUser'] ?? false),
+      );
     } catch (e) {
       print('error in sign in ' + e);
     }
@@ -94,7 +97,8 @@ class AccountInfo {
   final String username;
   final bool isuserverified;
   final String uid;
-  AccountInfo({this.username, this.isuserverified, this.uid});
+  final bool isSuperUser;
+  AccountInfo({this.username, this.isuserverified, this.uid, this.isSuperUser});
 }
 
 class GetUserState {

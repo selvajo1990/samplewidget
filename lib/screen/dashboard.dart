@@ -33,7 +33,9 @@ class _DashboardState extends State<Dashboard> {
                   fontWeight: FontWeight.w500,
                   fontSize: 20.0)),
         ),
-        drawer: MainDrawer(),
+        drawer: MainDrawer(
+          accountInfo: widget.accountInfo,
+        ),
         body: StaggeredGridView.count(
           crossAxisCount: 2,
           crossAxisSpacing: 12.0,
