@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:widget_samples/screen/_stream.dart';
 import 'package:provider/provider.dart';
+import 'package:widget_samples/screen/drawer/userlistdrawer.dart';
 import '_logindecider.dart';
 import 'package:overlay_support/overlay_support.dart';
 
@@ -25,7 +26,10 @@ class MyApp extends StatelessWidget {
           value: AuthService().onAuthStateChanged,
           builder: (context, snapshot) {
             return MaterialApp(
-              home: LoginDecider(),
+              routes: {
+                '/': (_) => LoginDecider(),
+                UserListDrawer.routeName: (_) => UserListDrawer(),
+              },
             );
           }),
     );

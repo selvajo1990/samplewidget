@@ -62,6 +62,17 @@ class AuthService {
     return await _firebaseAuth.signOut();
   }
 
+  // get list of user information
+
+  Future getUserInformationList() async {
+    try {
+      QuerySnapshot querySnapshot = await useraccount.getDocuments();
+      return querySnapshot;
+    } catch (error) {
+      print(error.toString());
+    }
+  }
+
   // to sign in as unknown to firebase
   Future signInAnanymous() async {
     try {
@@ -79,6 +90,17 @@ class AuthService {
     } catch (e) {
       print('error in sign in ' + e);
     }
+  }
+
+  Future updateUserAccountInfo(
+      String uid, bool isUserVerified, bool isSuperUser) async {
+    return await useraccount.document(uid).setData(
+        {'isSuperUser': isSuperUser, 'isverified': isUserVerified},
+        merge: true);
+  }
+
+  Stream<QuerySnapshot> get userAccountList {
+    return useraccount.snapshots();
   }
 
   UserModel _convert2UserModel(

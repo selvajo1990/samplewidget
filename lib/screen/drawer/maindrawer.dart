@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:widget_samples/screen/drawer/userlistdrawer.dart';
 import '../_stream.dart';
 
 AsyncSnapshot<AccountInfo> globalAccountInfo;
@@ -24,7 +25,7 @@ class _MainDrawerState extends State<MainDrawer> {
               icon: Icons.people,
               name: 'Users',
               onTap: () {
-                _userList();
+                Navigator.of(context).pushNamed(UserListDrawer.routeName);
               },
             ),
           ),
@@ -63,7 +64,7 @@ Widget _drawerHeader(context) {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                         image: NetworkImage(
-                          'https://images.unsplash.com/photo-1595840635571-5d6abc7d584b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=687&q=80',
+                          'https://images.unsplash.com/photo-1529335764857-3f1164d1cb24?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=635&q=80',
                         ),
                         fit: BoxFit.cover)),
               ),
@@ -139,10 +140,6 @@ _signOutConfirmation(BuildContext context) {
       ],
     ),
   );
-}
-
-Widget _userList() {
-  return ListView();
 }
 
 Widget textbadge(String badgeName) {
